@@ -6,11 +6,15 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
+import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsernameResult;
+import dev.niekirk.com.instagram4android.requests.payload.InstagramUser;
 import me.godap.ins.R;
+import me.godap.ins.component.ApiCallback;
 import me.godap.ins.component.InstagramManager;
 
 /**
@@ -45,6 +49,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 .load(mInstagramManager.getUserAvatar())
                 .apply(RequestOptions.circleCropTransform())
                 .into(mAvatarIv);
+        loadUserData();
+    }
+
+    private void loadUserData() {
+        mInstagramManager.getUserInfo(mInstagramManager.getUserName(), new ApiCallback<InstagramSearchUsernameResult>() {
+            @Override
+            public void onSuccess(InstagramSearchUsernameResult result) {
+                InstagramUser user = result.getUser();
+                mFollowerCountTv.setText(String.valueOf(user.getFollower_count()));
+                mFollowingCountTv.setText(String.valueOf(user.getFollowing_count()));
+            }
+
+            @Override
+            public void onError(Throwable e, String message) {
+                String reason = (e == null) ? message : e.toString();
+                Toast.makeText(MainActivity.this, "Load user data failed: " + reason, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

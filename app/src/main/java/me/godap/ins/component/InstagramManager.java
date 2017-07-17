@@ -5,8 +5,10 @@ import android.util.Log;
 import java.io.IOException;
 
 import dev.niekirk.com.instagram4android.Instagram4Android;
+import dev.niekirk.com.instagram4android.requests.InstagramSearchUsernameRequest;
 import dev.niekirk.com.instagram4android.requests.payload.InstagramLoggedUser;
 import dev.niekirk.com.instagram4android.requests.payload.InstagramLoginResult;
+import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsernameResult;
 import me.godap.ins.R;
 import me.godap.ins.application.GetFollowersApplication;
 import rx.Observable;
@@ -43,7 +45,7 @@ public class InstagramManager {
      * @param userName  用户名
      * @param password  密码
      */
-    public void login(final String userName, final String password, final ApiCallback<InstagramLoginResult> resultApiCallback) {
+    public void login(final String userName, final String password, final ApiCallback<InstagramLoginResult> callback) {
         rx.Observable.create(new Observable.OnSubscribe<InstagramLoginResult>() {
             @Override
             public void call(Subscriber<? super InstagramLoginResult> subscriber) {
@@ -65,8 +67,8 @@ public class InstagramManager {
             @Override
             public void onError(Throwable e) {
                 e.printStackTrace();
-                if (resultApiCallback != null) {
-                    resultApiCallback.onError(e, null);
+                if (callback != null) {
+                    callback.onError(e, null);
                 }
             }
 
@@ -75,12 +77,63 @@ public class InstagramManager {
                 Log.i(Consts.TAG, "Login Result. Status: " + instagramLoginResult.getStatus() + ", Result: " + instagramLoginResult.toString());
                 if (instagramLoginResult.getStatus().equals(GetFollowersApplication.mContext.getString(R.string.api_status_ok))) {
                     mUser = instagramLoginResult.getLogged_in_user();
-                    if (resultApiCallback != null) {
-                        resultApiCallback.onSuccess(instagramLoginResult);
+                    if (callback != null) {
+                        callback.onSuccess(instagramLoginResult);
                     }
                 } else {
-                    if (resultApiCallback != null) {
-                        resultApiCallback.onError(null, instagramLoginResult.getMessage());
+                    if (callback != null) {
+                        callback.onError(null, instagramLoginResult.getMessage());
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 通过账号名称获取用户信息
+     * @param userName  账户名称
+     */
+    public void getUserInfo(final String userName, final ApiCallback<InstagramSearchUsernameResult> callback) {
+        if (mInstagram == null) {
+            if (callback != null) {
+                callback.onError(null, "Not LoggedIn. Please login first.");
+            }
+            return;
+        }
+        rx.Observable.create(new Observable.OnSubscribe<InstagramSearchUsernameResult>() {
+            @Override
+            public void call(Subscriber<? super InstagramSearchUsernameResult> subscriber) {
+                try {
+                    InstagramSearchUsernameResult result = mInstagram.sendRequest(new InstagramSearchUsernameRequest(userName));
+                    subscriber.onNext(result);
+                } catch (IOException e) {
+                    subscriber.onError(e);
+                }
+            }
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Subscriber<InstagramSearchUsernameResult>() {
+            @Override
+            public void onCompleted() {}
+
+            @Override
+            public void onError(Throwable e) {
+                if (callback != null) {
+                    callback.onError(e, null);
+                }
+            }
+
+            @Override
+            public void onNext(InstagramSearchUsernameResult result) {
+                Log.i(Consts.TAG, "GetUserInfo Result. Status: " + result.getStatus() + ", Result: " + result.toString());
+                if (result.getStatus().equals(GetFollowersApplication.mContext.getString(R.string.api_status_ok))) {
+                    if (callback != null) {
+                        callback.onSuccess(result);
+                    }
+                } else {
+                    if (callback != null) {
+                        callback.onError(null, result.getMessage());
                     }
                 }
             }
