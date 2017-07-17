@@ -1,8 +1,9 @@
 package me.godap.ins.modules;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,8 +21,7 @@ import me.godap.ins.component.InstagramManager;
 /**
  * Created by Anchorer on 2017/7/17.
  */
-
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageView mAvatarIv;
     private TextView mNameTv, mFollowerCountTv, mFollowingCountTv;
@@ -37,6 +37,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void initViews() {
+        setTitle(getString(R.string.title_main));
         mAvatarIv = (ImageView) findViewById(R.id.avatar_iv);
         mNameTv = (TextView) findViewById(R.id.name_tv);
         mFollowerCountTv = (TextView) findViewById(R.id.followers_count_tv);
@@ -73,7 +74,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.followers_layout: {
-                // TODO 跳转到粉丝列表页面
+                // 跳转到粉丝列表页面
+                startActivity(new Intent(MainActivity.this, FollowersActivity.class));
                 break;
             }
             case R.id.following_layout: {

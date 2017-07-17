@@ -5,7 +5,9 @@ import android.util.Log;
 import java.io.IOException;
 
 import dev.niekirk.com.instagram4android.Instagram4Android;
+import dev.niekirk.com.instagram4android.requests.InstagramGetUserFollowersRequest;
 import dev.niekirk.com.instagram4android.requests.InstagramSearchUsernameRequest;
+import dev.niekirk.com.instagram4android.requests.payload.InstagramGetUserFollowersResult;
 import dev.niekirk.com.instagram4android.requests.payload.InstagramLoggedUser;
 import dev.niekirk.com.instagram4android.requests.payload.InstagramLoginResult;
 import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsernameResult;
@@ -75,7 +77,7 @@ public class InstagramManager {
             @Override
             public void onNext(InstagramLoginResult instagramLoginResult) {
                 Log.i(Consts.TAG, "Login Result. Status: " + instagramLoginResult.getStatus() + ", Result: " + instagramLoginResult.toString());
-                if (instagramLoginResult.getStatus().equals(GetFollowersApplication.mContext.getString(R.string.api_status_ok))) {
+                if (instagramLoginResult.getStatus().equals(getString(R.string.api_status_ok))) {
                     mUser = instagramLoginResult.getLogged_in_user();
                     if (callback != null) {
                         callback.onSuccess(instagramLoginResult);
@@ -96,7 +98,7 @@ public class InstagramManager {
     public void getUserInfo(final String userName, final ApiCallback<InstagramSearchUsernameResult> callback) {
         if (mInstagram == null) {
             if (callback != null) {
-                callback.onError(null, "Not LoggedIn. Please login first.");
+                callback.onError(null, getString(R.string.hint_need_login));
             }
             return;
         }
@@ -127,7 +129,57 @@ public class InstagramManager {
             @Override
             public void onNext(InstagramSearchUsernameResult result) {
                 Log.i(Consts.TAG, "GetUserInfo Result. Status: " + result.getStatus() + ", Result: " + result.toString());
-                if (result.getStatus().equals(GetFollowersApplication.mContext.getString(R.string.api_status_ok))) {
+                if (result.getStatus().equals(getString(R.string.api_status_ok))) {
+                    if (callback != null) {
+                        callback.onSuccess(result);
+                    }
+                } else {
+                    if (callback != null) {
+                        callback.onError(null, result.getMessage());
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 获取粉丝列表
+     * @param userId    当前用户的ID
+     */
+    public void getFollowersList(final long userId, final ApiCallback<InstagramGetUserFollowersResult> callback) {
+        if (mInstagram == null) {
+            if (callback != null) {
+                callback.onError(null, getString(R.string.hint_need_login));
+            }
+            return;
+        }
+        rx.Observable.create(new Observable.OnSubscribe<InstagramGetUserFollowersResult>() {
+            @Override
+            public void call(Subscriber<? super InstagramGetUserFollowersResult> subscriber) {
+                try {
+                    InstagramGetUserFollowersResult result = mInstagram.sendRequest(new InstagramGetUserFollowersRequest(userId, null));
+                    subscriber.onNext(result);
+                } catch (IOException e) {
+                    subscriber.onError(e);
+                }
+            }
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Subscriber<InstagramGetUserFollowersResult>() {
+            @Override
+            public void onCompleted() {}
+
+            @Override
+            public void onError(Throwable e) {
+                if (callback != null) {
+                    callback.onError(e, null);
+                }
+            }
+
+            @Override
+            public void onNext(InstagramGetUserFollowersResult result) {
+                if (result.getStatus().equals(getString(R.string.api_status_ok))) {
                     if (callback != null) {
                         callback.onSuccess(result);
                     }
@@ -159,6 +211,17 @@ public class InstagramManager {
      */
     public String getUserAvatar() {
         return (mUser == null) ? null : mUser.getProfile_pic_url();
+    }
+
+    /**
+     * 获取当前登录用户的用户ID
+     */
+    public long getUserId() {
+        return (mUser == null) ? 0 : mUser.getPk();
+    }
+
+    private String getString(int strId) {
+        return GetFollowersApplication.mContext.getString(strId);
     }
 
 }

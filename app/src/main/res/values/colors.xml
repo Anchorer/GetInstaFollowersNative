@@ -3,4 +3,30 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!-- 基础样式颜色 -->
+    <color name="black_1">#000000</color>
+    <color name="black_2">#303133</color>
+    <color name="black_3">#606060</color>
+    <color name="black_4">#3F3F3F</color>
+    <color name="black_5">#282828</color>
+    <color name="gray_1">#494A69</color>
+    <color name="gray_2">#648598</color>
+    <color name="gray_3">#94B3C4</color>
+    <color name="gray_4">#BCCBD3</color>
+    <color name="gray_5">#D4DFE5</color>
+    <color name="gray_6">#E9F2F7</color>
+    <color name="white_1">#F7F7F9</color>
+    <color name="white_2">#FFFFFF</color>
+    <color name="red_1">#ED4C4F</color>
+    <color name="red_2">#D6272B</color>
+    <color name="orange_1">#FC9153</color>
+    <color name="orange_2">#EE782B</color>
+    <color name="orange_3">#E6691E</color>
+    <color name="blue_1">#00B7EE</color>
+    <color name="blue_2">#448ACA</color>
+    <color name="blue_3">#3B589C</color>
+    <color name="green_1">#4ECACC</color>
+    <color name="green_2">#00B5B8</color>
+    <color name="green_3">#009699</color>
 </resources>

@@ -28,6 +28,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initViews() {
+        setTitle(getString(R.string.title_login));
         mUsernameEt = (EditText) findViewById(R.id.username_et);
         mPwEt = (EditText) findViewById(R.id.pw_et);
         findViewById(R.id.login_btn).setOnClickListener(this);
