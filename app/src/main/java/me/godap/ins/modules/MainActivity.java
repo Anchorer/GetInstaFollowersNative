@@ -79,7 +79,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
             case R.id.following_layout: {
-                // TODO 跳转到关注列表页面
+                // 跳转到关注列表页面
+                startActivity(new Intent(MainActivity.this, FollowingActivity.class));
                 break;
             }
         }
