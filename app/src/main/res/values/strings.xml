@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">GetFollowers2</string>
+    <string name="hint_waiting">Please wait…</string>
+    <string name="api_status_ok">ok</string>
 </resources>

@@ -1,27 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <EditText
-        android:id="@+id/username_et"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter username"/>
-    <EditText
-        android:id="@+id/pw_et"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter Password"
-        android:inputType="textPassword"/>
-    <Button
-        android:id="@+id/login_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Login"/>
+    <ImageView
+        android:id="@+id/avatar_iv"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_avatar_default"
+        android:layout_marginTop="50dp"/>
     <TextView
-        android:id="@+id/info_tv"
+        android:id="@+id/name_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"/>
-</LinearLayout>
+        android:layout_below="@id/avatar_iv"
+        android:gravity="center"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:textSize="16sp"/>
+    <LinearLayout
+        android:id="@+id/info_layout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_below="@id/name_tv"
+        android:baselineAligned="false">
+        <LinearLayout
+            android:id="@+id/followers_layout"
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Followers"
+                android:textSize="14sp"/>
+            <TextView
+                android:id="@+id/followers_count_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="0"
+                android:textSize="18sp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/following_layout"
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Following"
+                android:textSize="14sp"/>
+            <TextView
+                android:id="@+id/following_count_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:text="0"
+                android:textSize="18sp"/>
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
