@@ -1,0 +1,3 @@
+[submodule "Instagram4Android"]
+	path = Instagram4Android
+	url = git@github.com:Anchorer/Instagram4Android.git

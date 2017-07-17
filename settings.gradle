@@ -1,0 +1,3 @@
+include ':app', ':Instagram4Android'
+
+project(':Instagram4Android').projectDir = new File('Instagram4Android/app')
