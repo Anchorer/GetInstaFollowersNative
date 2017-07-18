@@ -28,10 +28,16 @@ public class SearchResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private UserDBManager mDBManager;
     private List<InstagramSearchUsersResultUser> mUserList;
 
-    public SearchResultAdapter(Context context, List<InstagramSearchUsersResultUser> userList) {
+    public interface FollowCallback {
+        void onFollowBtnClick(InstagramSearchUsersResultUser user);
+    }
+    private FollowCallback mCallback;
+
+    public SearchResultAdapter(Context context, List<InstagramSearchUsersResultUser> userList, FollowCallback callback) {
         this.mContext = context;
         this.mDBManager = UserDBManager.getInstance();
         this.mUserList = userList;
+        this.mCallback = callback;
     }
 
     class ItemHolder extends RecyclerView.ViewHolder {
@@ -57,7 +63,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ItemHolder itemHolder = (ItemHolder) holder;
-        InstagramSearchUsersResultUser user = getItem(position);
+        final InstagramSearchUsersResultUser user = getItem(position);
 
         Glide.with(mContext)
                 .load(user.getProfile_pic_url())
@@ -89,7 +95,9 @@ public class SearchResultAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             itemHolder.followBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO Follow User
+                    if (mCallback != null) {
+                        mCallback.onFollowBtnClick(user);
+                    }
                 }
             });
         }

@@ -89,6 +89,13 @@ public class UserDBManager {
     }
 
     /**
+     * 添加新的关注
+     */
+    public void addFollowing(Following following) {
+        mFollowingDao.insertOrReplace(following);
+    }
+
+    /**
      * 查询是否已经关注了指定用户
      * @param targetUserId  指定目标用户
      */

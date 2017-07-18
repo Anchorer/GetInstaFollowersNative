@@ -5,6 +5,7 @@ import android.util.Log;
 import java.io.IOException;
 
 import dev.niekirk.com.instagram4android.Instagram4Android;
+import dev.niekirk.com.instagram4android.requests.InstagramFollowRequest;
 import dev.niekirk.com.instagram4android.requests.InstagramGetUserFollowersRequest;
 import dev.niekirk.com.instagram4android.requests.InstagramGetUserFollowingRequest;
 import dev.niekirk.com.instagram4android.requests.InstagramSearchUsernameRequest;
@@ -14,6 +15,7 @@ import dev.niekirk.com.instagram4android.requests.payload.InstagramLoggedUser;
 import dev.niekirk.com.instagram4android.requests.payload.InstagramLoginResult;
 import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsernameResult;
 import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsersResult;
+import dev.niekirk.com.instagram4android.requests.payload.StatusResult;
 import me.godap.ins.R;
 import me.godap.ins.application.GetFollowersApplication;
 import me.godap.ins.dao.UserDBManager;
@@ -290,6 +292,56 @@ public class InstagramManager {
 
             @Override
             public void onNext(InstagramSearchUsersResult result) {
+                if (result.getStatus().equals(getString(R.string.api_status_ok))) {
+                    if (callback != null) {
+                        callback.onSuccess(result);
+                    }
+                } else {
+                    if (callback != null) {
+                        callback.onError(null, result.getMessage());
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 关注指定用户
+     * @param userId    目标用户ID
+     */
+    public void followUser(final long userId, final ApiCallback<StatusResult> callback) {
+        if (mInstagram == null) {
+            if (callback != null) {
+                callback.onError(null, getString(R.string.hint_need_login));
+            }
+            return;
+        }
+        rx.Observable.create(new Observable.OnSubscribe<StatusResult>() {
+            @Override
+            public void call(Subscriber<? super StatusResult> subscriber) {
+                try {
+                    StatusResult result = mInstagram.sendRequest(new InstagramFollowRequest(userId));
+                    subscriber.onNext(result);
+                } catch (IOException e) {
+                    subscriber.onError(e);
+                }
+            }
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Subscriber<StatusResult>() {
+            @Override
+            public void onCompleted() {}
+
+            @Override
+            public void onError(Throwable e) {
+                if (callback != null) {
+                    callback.onError(e, null);
+                }
+            }
+
+            @Override
+            public void onNext(StatusResult result) {
                 if (result.getStatus().equals(getString(R.string.api_status_ok))) {
                     if (callback != null) {
                         callback.onSuccess(result);

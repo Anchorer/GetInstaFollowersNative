@@ -14,16 +14,19 @@ import java.util.List;
 
 import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsersResult;
 import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsersResultUser;
+import dev.niekirk.com.instagram4android.requests.payload.StatusResult;
+import me.godap.ins.Following;
 import me.godap.ins.R;
 import me.godap.ins.component.ApiCallback;
 import me.godap.ins.component.InstagramManager;
+import me.godap.ins.dao.UserDBManager;
 import me.godap.ins.modules.adapter.SearchResultAdapter;
 
 /**
  * 添加好友页面
  * Created by Anchorer on 2017/7/18.
  */
-public class AddFriendActivity extends AppCompatActivity implements View.OnClickListener {
+public class AddFriendActivity extends AppCompatActivity implements View.OnClickListener, SearchResultAdapter.FollowCallback {
 
     private EditText mKeyEt;
     private RecyclerView mUserRv;
@@ -86,7 +89,7 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
     private void displayUserList(List<InstagramSearchUsersResultUser> userList) {
         if (mAdapter == null) {
             mUserRv.setLayoutManager(new LinearLayoutManager(this));
-            mAdapter = new SearchResultAdapter(this, userList);
+            mAdapter = new SearchResultAdapter(this, userList, this);
             mUserRv.setAdapter(mAdapter);
         } else {
             mAdapter.resetListData(userList);
@@ -99,4 +102,35 @@ public class AddFriendActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    @Override
+    public void onFollowBtnClick(final InstagramSearchUsersResultUser user) {
+        mProgressDialog = ProgressDialog.show(this, null, getString(R.string.hint_waiting), true);
+        final long targetUserId = user.getPk();
+        mInstagramManager.followUser(targetUserId, new ApiCallback<StatusResult>() {
+            @Override
+            public void onSuccess(StatusResult result) {
+                dismissProgressDialog();
+                Toast.makeText(AddFriendActivity.this, "Follow Success!", Toast.LENGTH_SHORT).show();
+                // 向数据库中增加新的关注
+                Following following = new Following(targetUserId);
+                following.setUserName(user.getUsername());
+                following.setFullName(user.getFull_name());
+                following.setAvatarUrl(user.getProfile_pic_url());
+                following.setIsPrivate(user.is_private());
+                UserDBManager.getInstance().addFollowing(following);
+
+                // 更新列表源
+                if (mAdapter != null) {
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onError(Throwable e, String message) {
+                dismissProgressDialog();
+                String reason = (e == null) ? message : e.toString();
+                Toast.makeText(AddFriendActivity.this, "Follow Failed: " + reason, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }
