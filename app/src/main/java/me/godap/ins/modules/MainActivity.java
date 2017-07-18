@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFollowingCountTv = (TextView) findViewById(R.id.following_count_tv);
         findViewById(R.id.followers_layout).setOnClickListener(this);
         findViewById(R.id.following_layout).setOnClickListener(this);
+        findViewById(R.id.add_friend_tv).setOnClickListener(this);
 
         mNameTv.setText(mInstagramManager.getUserFullName());
         Glide.with(this)
@@ -81,6 +82,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.following_layout: {
                 // 跳转到关注列表页面
                 startActivity(new Intent(MainActivity.this, FollowingActivity.class));
+                break;
+            }
+            case R.id.add_friend_tv: {
+                // 跳转到添加好友页面
+                startActivity(new Intent(MainActivity.this, AddFriendActivity.class));
                 break;
             }
         }

@@ -67,4 +67,23 @@
                 android:textSize="18sp"/>
         </LinearLayout>
     </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/gray_5"
+        android:layout_below="@id/info_layout"/>
+    <TextView
+        android:id="@+id/add_friend_tv"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@id/info_layout"
+        android:gravity="center"
+        android:text="@string/menu_add_friend"
+        android:textSize="18sp"
+        android:textColor="@color/black_2"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/gray_5"
+        android:layout_below="@id/add_friend_tv"/>
 </RelativeLayout>

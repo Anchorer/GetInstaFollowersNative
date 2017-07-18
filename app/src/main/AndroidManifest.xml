@@ -24,6 +24,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".modules.FollowingActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".modules.AddFriendActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

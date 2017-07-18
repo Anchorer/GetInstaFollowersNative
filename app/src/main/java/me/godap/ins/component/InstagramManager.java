@@ -8,10 +8,12 @@ import dev.niekirk.com.instagram4android.Instagram4Android;
 import dev.niekirk.com.instagram4android.requests.InstagramGetUserFollowersRequest;
 import dev.niekirk.com.instagram4android.requests.InstagramGetUserFollowingRequest;
 import dev.niekirk.com.instagram4android.requests.InstagramSearchUsernameRequest;
+import dev.niekirk.com.instagram4android.requests.InstagramSearchUsersRequest;
 import dev.niekirk.com.instagram4android.requests.payload.InstagramGetUserFollowersResult;
 import dev.niekirk.com.instagram4android.requests.payload.InstagramLoggedUser;
 import dev.niekirk.com.instagram4android.requests.payload.InstagramLoginResult;
 import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsernameResult;
+import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsersResult;
 import me.godap.ins.R;
 import me.godap.ins.application.GetFollowersApplication;
 import me.godap.ins.dao.UserDBManager;
@@ -187,6 +189,7 @@ public class InstagramManager {
             @Override
             public void onNext(InstagramGetUserFollowersResult result) {
                 if (result.getStatus().equals(getString(R.string.api_status_ok))) {
+                    UserDBManager.getInstance().updateFollowerList(result.getUsers());
                     if (callback != null) {
                         callback.onSuccess(result);
                     }
@@ -236,6 +239,57 @@ public class InstagramManager {
 
             @Override
             public void onNext(InstagramGetUserFollowersResult result) {
+                if (result.getStatus().equals(getString(R.string.api_status_ok))) {
+                    UserDBManager.getInstance().updateFollowingList(result.getUsers());
+                    if (callback != null) {
+                        callback.onSuccess(result);
+                    }
+                } else {
+                    if (callback != null) {
+                        callback.onError(null, result.getMessage());
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 搜索用户
+     * @param keyword   搜索关键字
+     */
+    public void searchUsers(final String keyword, final ApiCallback<InstagramSearchUsersResult> callback) {
+        if (mInstagram == null) {
+            if (callback != null) {
+                callback.onError(null, getString(R.string.hint_need_login));
+            }
+            return;
+        }
+        rx.Observable.create(new Observable.OnSubscribe<InstagramSearchUsersResult>() {
+            @Override
+            public void call(Subscriber<? super InstagramSearchUsersResult> subscriber) {
+                try {
+                    InstagramSearchUsersResult result = mInstagram.sendRequest(new InstagramSearchUsersRequest(keyword));
+                    subscriber.onNext(result);
+                } catch (IOException e) {
+                    subscriber.onError(e);
+                }
+            }
+        })
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(new Subscriber<InstagramSearchUsersResult>() {
+            @Override
+            public void onCompleted() {}
+
+            @Override
+            public void onError(Throwable e) {
+                if (callback != null) {
+                    callback.onError(e, null);
+                }
+            }
+
+            @Override
+            public void onNext(InstagramSearchUsersResult result) {
                 if (result.getStatus().equals(getString(R.string.api_status_ok))) {
                     if (callback != null) {
                         callback.onSuccess(result);

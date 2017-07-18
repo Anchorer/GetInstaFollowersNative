@@ -1,11 +1,21 @@
 <resources>
     <string name="app_name">GetFollowers2</string>
+
     <string name="hint_waiting">Please wait…</string>
     <string name="hint_need_login">Not LoggedIn. Please login first.</string>
+    <string name="hint_enter_username">Enter username</string>
+
     <string name="api_status_ok">ok</string>
 
     <string name="title_login">Login to Instagram</string>
     <string name="title_main">My Profile</string>
     <string name="title_followers">My Followers</string>
     <string name="title_followings">My Followings</string>
+    <string name="title_add_friend">Add Friend</string>
+
+    <string name="menu_add_friend">Add Friend ==></string>
+    <string name="menu_search">Search</string>
+    <string name="menu_follow">Follow</string>
+    <string name="menu_followed">Followed</string>
+
 </resources>
