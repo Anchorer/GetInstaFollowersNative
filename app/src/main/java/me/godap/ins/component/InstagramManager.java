@@ -14,6 +14,7 @@ import dev.niekirk.com.instagram4android.requests.payload.InstagramLoginResult;
 import dev.niekirk.com.instagram4android.requests.payload.InstagramSearchUsernameResult;
 import me.godap.ins.R;
 import me.godap.ins.application.GetFollowersApplication;
+import me.godap.ins.dao.UserDBManager;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -27,6 +28,7 @@ public class InstagramManager {
 
     private Instagram4Android mInstagram;
     private InstagramLoggedUser mUser;
+    private UserDBManager mUserDBManager;
 
     private volatile static InstagramManager sInstance;
 
@@ -41,7 +43,9 @@ public class InstagramManager {
         return sInstance;
     }
 
-    private InstagramManager() {}
+    private InstagramManager() {
+        mUserDBManager = UserDBManager.getInstance();
+    }
 
     /**
      * 登录到Instagram
@@ -80,6 +84,8 @@ public class InstagramManager {
                 Log.i(Consts.TAG, "Login Result. Status: " + instagramLoginResult.getStatus() + ", Result: " + instagramLoginResult.toString());
                 if (instagramLoginResult.getStatus().equals(getString(R.string.api_status_ok))) {
                     mUser = instagramLoginResult.getLogged_in_user();
+                    // 将登录用户信息存到数据库
+                    mUserDBManager.saveLoggedUser(mUser);
                     if (callback != null) {
                         callback.onSuccess(instagramLoginResult);
                     }

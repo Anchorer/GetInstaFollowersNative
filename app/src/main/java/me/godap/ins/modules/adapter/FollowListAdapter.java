@@ -3,6 +3,7 @@ package me.godap.ins.modules.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import dev.niekirk.com.instagram4android.requests.payload.InstagramUserSummary;
 import me.godap.ins.R;
+import me.godap.ins.component.Consts;
 
 /**
  * 粉丝列表/关注列表适配器
@@ -51,6 +53,7 @@ public class FollowListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         InstagramUserSummary user = getItem(position);
         ItemHolder itemHolder = (ItemHolder) holder;
+        Log.i(Consts.TAG, "Display: " + user.getFull_name() + ", isFavorite: " + user.is_favorite());
         Glide.with(mContext)
                 .load(user.getProfile_pic_url())
                 .apply(RequestOptions.circleCropTransform())
